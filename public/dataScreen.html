@@ -219,37 +219,36 @@ input:focus{
 
 </div>
 
+<!--
+  Bu sayfa = iPad GİRİŞ ekranı (part-time görevlinin elinde).
+  Görevi: isim/soyisim/skor girip sunucuya yollamak ve müzik butonunu tetiklemek.
+  Ses bu cihazdan DEĞİL, sunucu üzerinden büyük ekrandan çalar.
+  Not: socket.io yolu mutlak ("/...") yazılmalı; göreli yazılırsa alt yolda kırılır.
+-->
 <script src="/socket.io/socket.io.js"></script>
 
 <script>
 const socket = io();
 
-// Müzik büyük ekrandan çalsın diye sunucuya sinyal gönder
+// Müzik büyük ekrandan çalsın diye sunucuya sinyal gönderiyoruz.
+// Burada ses çalmıyoruz; sadece "playSound" olayını yolluyoruz.
 function playSound(){
     socket.emit("playSound");
 }
 
+// Form gönderilince skoru sunucuya yolla.
 document.getElementById("scoreForm")
 .addEventListener("submit", function(e){
-
-    e.preventDefault();
+    e.preventDefault(); // sayfanın yeniden yüklenmesini engelle (SPA gibi davran)
 
     const name = document.getElementById("isim").value;
     const surname = document.getElementById("soyisim").value;
-    const score = Number(document.getElementById("skor").value);
+    const score = Number(document.getElementById("skor").value); // input değeri metindir → sayıya çevir
 
-    socket.emit("newScore", {
-        name,
-        surname,
-        score
-    });
+    socket.emit("newScore", { name, surname, score });
 
-    this.reset();
-
-
-    
+    this.reset(); // formu temizle, sıradaki kişi için hazır olsun
 });
-
 </script>
 </body>
 </html>
